@@ -14,7 +14,6 @@ import re
 from datetime import date
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent.parent
 PYPROJECT = ROOT / "pyproject.toml"
 CHANGELOG = ROOT / "CHANGELOG.md"

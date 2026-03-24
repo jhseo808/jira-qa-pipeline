@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 
 def test_bump_version_dry_run_does_not_change_files(tmp_path: Path) -> None:
     # Arrange: minimal pyproject + changelog
