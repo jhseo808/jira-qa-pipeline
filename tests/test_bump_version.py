@@ -44,4 +44,3 @@ def test_scaffold_changelog_inserts_version(tmp_path: Path) -> None:
     m.scaffold_changelog("1.2.3", dry_run=False)
     text = changelog.read_text(encoding="utf-8")
     assert "## [1.2.3]" in text
-

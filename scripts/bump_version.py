@@ -20,7 +20,9 @@ CHANGELOG = ROOT / "CHANGELOG.md"
 
 
 _VERSION_RE = re.compile(r'(?m)^version\s*=\s*"(?P<v>[^"]+)"\s*$')
-_HEADING_RE = re.compile(r"(?m)^## \[(?P<v>[0-9]+\.[0-9]+\.[0-9]+)\]\s+-\s+(?P<d>\d{4}-\d{2}-\d{2})\s*$")
+_HEADING_RE = re.compile(
+    r"(?m)^## \[(?P<v>[0-9]+\.[0-9]+\.[0-9]+)\]\s+-\s+(?P<d>\d{4}-\d{2}-\d{2})\s*$"
+)
 
 
 def _read(path: Path) -> str:
@@ -55,12 +57,7 @@ def scaffold_changelog(new_version: str, *, dry_run: bool) -> None:
         return
 
     today = date.today().isoformat()
-    entry = (
-        f"## [{new_version}] - {today}\n\n"
-        "### Added\n\n"
-        "### Changed\n\n"
-        "### Fixed\n\n"
-    )
+    entry = f"## [{new_version}] - {today}\n\n### Added\n\n### Changed\n\n### Fixed\n\n"
 
     # Insert right after [Unreleased] section header.
     idx = raw.find("## [Unreleased]")
@@ -101,4 +98,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

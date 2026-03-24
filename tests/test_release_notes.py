@@ -28,4 +28,3 @@ def test_extract_notes_returns_section_body() -> None:
 def test_extract_notes_errors_when_missing() -> None:
     with pytest.raises(SystemExit):
         extract_notes("## [Unreleased]\n", "9.9.9")
-
