@@ -1,0 +1,42 @@
+#
+# Sample config for portability (no absolute paths).
+#
+# Usage:
+#   python workflow_runner.py --config config.sample.yaml --ticket PA-21 --step all --url https://...
+#
+# Recommended:
+#   Set env vars (QA_PIPELINE_*) for secrets/paths instead of committing local values.
+#
+
+acli:
+  # If acli.exe is on PATH, you can keep it as "acli.exe".
+  # Otherwise set via env: QA_PIPELINE_ACLI_PATH
+  path: "acli.exe"
+
+  # Optional: some environments keep a token file path for acli
+  # token_path: "./secrets/token.txt"
+
+  # Optional metadata (not required by the runner itself)
+  site: ""
+  email: ""
+
+jira:
+  severity_field: "customfield_10058"
+  resolved_statuses: ["완료", "Done", "Resolved", "해결됨", "Closed"]
+  bug_issue_type: "버그"
+
+playwright:
+  executable: "npx"
+  browser: "chromium"
+  timeout_ms: 30000
+  headless: true
+
+output:
+  # Relative paths are resolved against project root.
+  base_dir: "./output"
+
+dashboard:
+  # If set, Step 7 adds: AND summary ~ "..."
+  bug_summary_contains: ""
+  # bug_jql_suffix: ""
+

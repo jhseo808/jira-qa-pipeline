@@ -1,0 +1,9 @@
+# Local/sandbox artifacts (avoid noisy permission errors during search)
+output/_pytest_tmp
+pytest_basetemp
+test_tmp
+.pytest_cache
+.ruff_cache
+__pycache__
+.venv
+output/**/node_modules

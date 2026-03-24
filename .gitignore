@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Local configs / secrets
+config.local.yaml
+.env
+.claude/settings.local.json
+
+# Output artifacts
+output/
+test_tmp/
+pytest_basetemp/
+
+# Node
+node_modules/
+output/**/node_modules/

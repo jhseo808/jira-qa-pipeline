@@ -1,0 +1,39 @@
+# Portable default config (safe to share/commit).
+# Put machine-specific paths or secrets into config.local.yaml or env vars.
+#
+# Priority (highest to lowest):
+#   1) Env vars (QA_PIPELINE_*)
+#   2) --config <path>
+#   3) config.local.yaml (if exists)
+#   4) config.yaml (this file)
+#
+acli:
+  # If acli.exe is not on PATH, set env QA_PIPELINE_ACLI_PATH or use config.local.yaml.
+  path: "acli.exe"
+  # token_path: "./secrets/token.txt"
+  site: ""
+  email: ""
+
+jira:
+  severity_field: "customfield_10058"
+  resolved_statuses: ["완료", "Done", "Resolved", "해결됨", "Closed"]
+  bug_issue_type: "버그"
+
+claude:
+  api_key_env: "ANTHROPIC_API_KEY"
+  model: "claude-sonnet-4-6"
+  max_tokens: 8192
+
+playwright:
+  executable: "npx"
+  browser: "chromium"
+  timeout_ms: 30000
+  headless: true
+
+output:
+  base_dir: "./output"
+
+dashboard:
+  # If set, Step 7 adds: AND summary ~ "..."
+  bug_summary_contains: ""
+  # bug_jql_suffix: ""
