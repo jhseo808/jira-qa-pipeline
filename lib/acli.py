@@ -72,6 +72,28 @@ class AcliClient:
         except Exception:
             return None
 
+    def run_json_checked(self, args: list) -> dict | list:
+        """
+        Run acli with --json and raise on non-zero exit.
+        Useful for pipeline steps that must fetch from Jira (e.g. dashboard).
+        """
+        cmd = [self.acli_path] + args + ["--json"]
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "LANG": "en_US.UTF-8"},
+        )
+        if result.returncode != 0:
+            stderr = (result.stderr or "").strip()
+            raise RuntimeError(f"acli failed: {' '.join(cmd)}\n{stderr}")
+        try:
+            return json.loads(result.stdout)
+        except Exception as e:
+            raise RuntimeError(f"acli returned invalid JSON: {' '.join(cmd)}") from e
+
     def run_text(self, args: list) -> str:
         """Run acli without --json, return raw stdout text."""
         result = subprocess.run(
@@ -82,6 +104,22 @@ class AcliClient:
             errors="replace",
             env={**os.environ, "LANG": "en_US.UTF-8"},
         )
+        return result.stdout
+
+    def run_text_checked(self, args: list) -> str:
+        """Run acli without --json and raise on non-zero exit."""
+        cmd = [self.acli_path] + args
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "LANG": "en_US.UTF-8"},
+        )
+        if result.returncode != 0:
+            stderr = (result.stderr or "").strip()
+            raise RuntimeError(f"acli failed: {' '.join(cmd)}\n{stderr}")
         return result.stdout
 
     # ── Jira operations ────────────────────────────────────────────────────────
@@ -106,6 +144,23 @@ class AcliClient:
         pattern = rf"{re.escape(project_key)}-\d+"
         keys = re.findall(pattern, text)
         return list(dict.fromkeys(keys))  # deduplicate, preserve order
+
+    def search_issues_checked(self, jql: str, project_key: str) -> list[str]:
+        """Like search_issues(), but raises if acli returns non-zero exit."""
+        text = self.run_text_checked(
+            [
+                "jira",
+                "workitem",
+                "search",
+                "--jql",
+                jql,
+                "--limit",
+                "200",
+            ]
+        )
+        pattern = rf"{re.escape(project_key)}-\d+"
+        keys = re.findall(pattern, text)
+        return list(dict.fromkeys(keys))
 
     def get_issue_detail(self, key: str) -> dict | None:
         """

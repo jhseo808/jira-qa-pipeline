@@ -75,7 +75,7 @@ D:\jhseo\project\atlassian-builer\
 │   ├── acli.py
 │   ├── state.py
 │   ├── scheduler.py
-│   └── fetch_jira.py
+│   └── jira_rest.py
 │
 ├── steps/
 │   ├── step1_plan_generator.py
@@ -144,8 +144,8 @@ python workflow_runner.py --ticket PA-21 --step all --dry-run
 | Step 1 (plan) | Jira 티켓 fetch, state 캐시 | `output/{ticket}/qa_plan.md` 직접 작성 |
 | Step 2 (testcases) | QA 계획서 로드 확인 | `output/{ticket}/test_cases.md` 직접 작성 |
 | Step 3 (playwright) | playwright-cli 페이지 분석 보조 | 스냅샷 분석 후 POM TypeScript 파일 생성 |
-| Step 4 (run) | `npx playwright test` 자동 실행 | 실패 스크린샷(`only-on-failure`), 필요 TC는 `fixtures/evidence.ts`로 선택 캡처 |
-| Step 5 (report) | 결과 JSON 로드 | `output/{ticket}/qa_report.md` 직접 작성 |
+| Step 4 (run) | `npx playwright test` 자동 실행 | 실패 스크린샷(`only-on-failure`), 실패 목록(`failed_tests.txt`) + 재실행 스크립트(`rerun_failed.ps1`) 생성 |
+| Step 5 (report) | 결과 JSON 로드 | `qa_report.md`에 실패 TC 포함 + 1차/2차(재실행) 히스토리 기록 |
 | Step 6 (bugs) | acli로 Jira 버그 티켓 생성 | — |
 | Step 7 (dashboard) | generate_dashboard.py 재사용 | — |
 | Step 8 (sideeffects) | 최근 버그 fetch | `side_effects.md` + TC 추가 작성 |

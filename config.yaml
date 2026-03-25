@@ -29,6 +29,11 @@ playwright:
   browser: "chromium"
   timeout_ms: 30000
   headless: true
+  # Speed controls (optional)
+  workers: 2             # overrides Playwright workers (parallelism)
+  fully_parallel: true   # enables --fully-parallel (parallel within spec file)
+  # max_failures: 0        # 0=unlimited, 1=fail-fast (debug only)
+  # test_timeout_ms: 90000 # overrides Playwright --timeout (ms)
 
 output:
   base_dir: "./output"

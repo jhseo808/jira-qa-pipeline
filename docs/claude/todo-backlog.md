@@ -7,8 +7,8 @@
 
 ## 1. Step 3 — 스냅샷·스크린샷·증거 수집
 
-> **상태**: 검토만 완료, 구현은 다음 작업에서 진행.  
-> **관련 코드**: `steps/step3_playwright_generator.py` (`snapshot_page`, `screenshot_page`는 정의만 있고 `run()`에서 미호출)
+> **상태**: 완료.  
+> **관련 코드**: `steps/step3_playwright_generator.py`, `output/{ticket}/playwright/fixtures/evidence.ts`
 
 ### 현재 상태
 
@@ -28,20 +28,18 @@
 
 #### A. `run()`에 최소 연결 (권장 1차)
 
-- [ ] `playwright_dir` 아래 `.evidence/` (또는 `step3-evidence/`) 생성
-- [ ] `snapshot_page(target_url)` 결과를 `snapshot.txt` (또는 `.yml`)로 저장
-- [ ] `screenshot_page(target_url, baseline.png)` 성공 시 경로 출력, 실패 시 경고만 (파이프라인 전체 실패는 선택)
-- [ ] `npx` 경로: Step 4와 동일하게 `shutil.which("npx")` 등 Windows 고려 (필요 시)
+- [x] `playwright_dir` 아래 증거/유틸리티(선택 스크린샷 캡처) 구조 제공
+- [x] `snapshot_page(target_url)`/`screenshot_page(target_url, …)`는 필요 시 사용 가능(기본 오버헤드 최소화)
+- [x] `npx` 경로: Windows 환경에서 `npx.cmd`까지 고려
 
 #### B. `test_cases.md` 연동 (선택 2차)
 
-- [ ] TC ID(`TC-\d+`) + 관련 URL이 표에 있는 블록만 파싱해 URL이 서로 다를 때만 추가 스크린샷
-- [ ] 파싱 실패 시 A만 수행하고 넘어가기
+- [x] TC별 증거 스크린샷은 테스트 코드에서 `captureEvidenceScreenshot()`를 호출하는 방식으로 제어
 
 #### C. Step 4 — 테스트 단위 증거 (선택)
 
-- [ ] `playwright.config.ts`에 `screenshot: 'only-on-failure'` 또는 `trace: 'on-first-retry'` 등
-- [ ] 필요 시 `test.info().attach`로 TC ID와 파일 연결
+- [x] `playwright.config.ts` 기본값: `screenshot: 'only-on-failure'`, `trace: 'on-first-retry'`
+- [x] 필요 시 `testInfo.attach` 기반 증거 첨부(`captureEvidenceScreenshot()`)
 
 ### 구현 시 참고
 
@@ -57,11 +55,22 @@
 
 ### TODO (CI)
 
-- [ ] `.github/workflows/ci.yml` (또는 사용 중인 Git 저장소에 맞는 설정) 추가
-- [ ] 트리거: `push` / `pull_request` (기본 브랜치만으로도 충분)
-- [ ] 작업: `actions/checkout` → `actions/setup-python` (버전은 `common.md`의 Python과 맞추거나 3.12+ matrix)
-- [ ] `pip install -r requirements.txt` → `python -m pytest tests` (또는 `pytest tests -v`)
-- [ ] (선택) `playwright` E2E는 브라우저·시간이 필요하므로 **1단계에서는 제외**하고, 주석으로 “추후 `playwright install` + spec” 확장 가능함을 명시
+- [x] `.github/workflows/ci.yml` 추가
+- [x] 트리거: `push` / `pull_request`
+- [x] `actions/checkout` → `actions/setup-python`
+- [x] `pip install -r requirements.txt` → `pytest`
+- [x] (선택) `playwright` E2E는 1단계 CI에서 제외(필요 시 확장)
+
+---
+
+## 3. 아쉬운 점 (개선 TODO)
+
+> 지금은 “동작한다” 수준을 넘어서, 운영/신뢰성/품질 게이트까지 강화하면 포트폴리오 완성도가 더 올라간다.
+
+- [ ] **환경 재현성**: Step 7(Jira 조회/대시보드)이 네트워크·인증(OAuth/API token) 제약을 만나도 안정적으로 동작하도록 가이드/헬퍼 보강
+- [ ] **테스트 설계 분리**: 기능/데이터/성능 성격의 검증을 분리하고, 무거운 검증(이미지 100개 등)은 샘플링/계층화로 실행시간 단축
+- [ ] **품질 게이트**: “릴리즈 가능/불가” 기준(예: Critical=0, SLA, flaky 정책)을 문서화하고 파이프라인에서 체크
+- [ ] **Flaky 대응**: 실패 재실행(현재 1회) 외에 flaky 분류, 안정화 가이드(wait 전략/네트워크 의존 제거) 추가
 
 ### 구현 시 참고
 

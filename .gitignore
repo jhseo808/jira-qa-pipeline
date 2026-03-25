@@ -9,6 +9,7 @@ __pycache__/
 config.local.yaml
 .env
 .claude/settings.local.json
+.playwright-cli/
 
 # Output artifacts
 output/

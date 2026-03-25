@@ -64,6 +64,9 @@ def load_config(config_path: str = "config.yaml", project_root: Path | None = No
       - QA_PIPELINE_ACLI_SITE
       - QA_PIPELINE_ACLI_EMAIL
       - QA_PIPELINE_OUTPUT_DIR
+      - QA_PIPELINE_PW_WORKERS
+      - QA_PIPELINE_PW_FULLY_PARALLEL
+      - QA_PIPELINE_PW_MAX_FAILURES
     """
     root = project_root or Path(__file__).resolve().parent.parent
 
@@ -103,12 +106,14 @@ def load_config(config_path: str = "config.yaml", project_root: Path | None = No
         "acli.site": os.environ.get("QA_PIPELINE_ACLI_SITE", "").strip(),
         "acli.email": os.environ.get("QA_PIPELINE_ACLI_EMAIL", "").strip(),
         "output.base_dir": os.environ.get("QA_PIPELINE_OUTPUT_DIR", "").strip(),
+        "playwright.workers": os.environ.get("QA_PIPELINE_PW_WORKERS", "").strip(),
+        "playwright.fully_parallel": os.environ.get("QA_PIPELINE_PW_FULLY_PARALLEL", "").strip(),
+        "playwright.max_failures": os.environ.get("QA_PIPELINE_PW_MAX_FAILURES", "").strip(),
     }
     for k, v in env_overrides.items():
         if v:
             _set_nested(cfg, k, v)
 
-    # Normalize paths (only for keys that represent filesystem paths)
     # Normalize paths (only for keys that represent filesystem paths)
     v = _get_nested(cfg, "acli.path")
     if isinstance(v, str) and v.strip():

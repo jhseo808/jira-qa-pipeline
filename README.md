@@ -6,15 +6,43 @@ Claude Code가 문서·POM·테스트 생성에 참여하고, acli(Atlassian CLI
 
 ---
 
+## 파이프라인 흐름
+
+```mermaid
+flowchart TD
+    Jira([🎫 Jira 티켓\nPA-21]) --> S1
+
+    S1["📋 Step 1\nQA 계획서\nqa_plan.md"]
+    S2["🗂 Step 2\n테스트케이스\ntest_cases.md"]
+    S3["🎭 Step 3\nPlaywright 생성\npages/ · tests/"]
+    S4["▶️ Step 4\n테스트 실행\ntest_results.json"]
+    S5["📊 Step 5\nQA 보고서\nqa_report.md"]
+    S6["🐛 Step 6\n버그 생성\ncreated_bugs.json"]
+    S7["📈 Step 7\n대시보드\ndashboard.html"]
+    S8["🔍 Step 8\n사이드이펙트\nside_effects.md"]
+
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8
+
+    S4 -->|"실패 발생 시\nrerun_failed.ps1"| Rerun["🔄 실패만 재실행\ntest_results_rerun.json"]
+    Rerun --> S5
+
+    style Jira fill:#0052CC,color:#fff
+    style Rerun fill:#FF5630,color:#fff
+```
+
+> **Claude Code** 가 Step 1·2·3에서 페이지 분석·문서·테스트 코드를 생성하고, Step 4·5·6·7은 스크립트가 자동 처리합니다.
+
+---
+
 ## 주요 기능
 
 | 단계 | 내용 |
 |------|------|
 | Step 1: QA 계획서 | Jira 티켓 정보를 fetch하여 13섹션 QA 계획서 생성 |
 | Step 2: 테스트케이스 | QA 계획서 기반 테스트케이스 작성 |
-| Step 3: Playwright 생성 | playwright-cli로 페이지 분석 후 POM + 테스트 코드 생성 |
-| Step 4: 테스트 실행 | `npx playwright test`로 자동 실행 및 결과 JSON 저장 |
-| Step 5: QA 보고서 | 테스트 결과를 바탕으로 QA 결과서 생성 |
+| Step 3: Playwright 생성 | playwright-cli로 페이지 분석 후 POM + 테스트 코드 생성 (증거 스크린샷은 필요한 TC에서만 선택 캡처) |
+| Step 4: 테스트 실행 | Playwright 자동 실행 + 결과 JSON 저장 + 실패 스크린샷(only-on-failure) + 실패 목록/재실행 스크립트 생성 |
+| Step 5: QA 보고서 | 실패 요약(테스트케이스 ID 포함) + 1차 실패 원인 분석 + 실패만 1회 재테스트 결과 히스토리까지 자동 생성 |
 | Step 6: 버그 생성 | 실패 테스트를 Jira 버그 티켓으로 자동 등록 |
 | Step 7: 대시보드 | Jira 버그 데이터를 집계한 HTML 대시보드 생성 |
 | Step 8: 사이드이펙트 | 최근 버그 분석으로 사이드이펙트 감지 및 리포트 |
@@ -81,6 +109,13 @@ python workflow_runner.py --ticket PA-21 --step plan
 python workflow_runner.py --ticket PA-21 --step all --from-step report
 ```
 
+### (옵션) 실행이 느릴 때
+
+- 기본 설정은 `config.yaml`의 `playwright.workers=2`, `playwright.fully_parallel=true` 로 병렬 실행한다.
+- 실패가 나면 Step 4가 아래 파일을 자동 생성하고, **실패 케이스만 1회 재실행**할 수 있다.
+  - `output/{ticket}/failed_tests.txt`
+  - `output/{ticket}/rerun_failed.ps1` → `output/{ticket}/test_results_rerun.json`
+
 ---
 
 ## 설정
@@ -98,6 +133,10 @@ python workflow_runner.py --ticket PA-21 --step all --from-step report
 QA_PIPELINE_CONFIG=./config.local.yaml
 QA_PIPELINE_ACLI_PATH=C:\path\to\acli.exe
 QA_PIPELINE_OUTPUT_DIR=./output
+QA_PIPELINE_PW_WORKERS=2
+QA_PIPELINE_PW_FULLY_PARALLEL=1
+QA_PIPELINE_PW_MAX_FAILURES=1
+QA_PIPELINE_REPORT_DATE=YYYY-MM-DD
 ```
 
 ---
