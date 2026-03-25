@@ -32,9 +32,9 @@
 
 ## Jira Connection
 
-- CLI tool: `D:\jhseo\project\AtlassianCLI\acli.exe` (v1.3.14)
-- Site: `jhseo.atlassian.net`, Email: `jhseo808@gmail.com`
-- Token: `D:\jhseo\project\AtlassianCLI\token.txt`
+- CLI tool: `..\AtlassianCLI\acli.exe` (v1.3.14)
+- Site: `도메인.atlassian.net`, Email: `xxx@gmail.com`
+- Token: `..\AtlassianCLI\token.txt`
 - Severity 커스텀 필드: `customfield_10058` (Critical / Major / Medium / Minor)
 - 티켓 조회: `acli.exe jira workitem view PA-21` (plain text)
 - JSON 조회: `acli.exe jira workitem view PA-21 --json`
