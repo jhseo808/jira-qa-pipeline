@@ -54,7 +54,7 @@
 ## 저장소 파일 구조
 
 ```
-D:\jhseo\project\atlassian-builer\
+C:user\atlassian-builer\
 ├── workflow_runner.py              # 메인 오케스트레이터 CLI
 ├── config.yaml                    # 전역 설정
 ├── requirements.txt               # pyyaml
